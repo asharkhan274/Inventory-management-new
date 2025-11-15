@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Inventory Management - Animated</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* --- 1. Global Variables & Base Styling --- */
+        :root {
+            /* Light Mode Colors */
+            --bg-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --header-bg: #1e88e5; /* Primary Blue */
+            --header-text: white;
+            --border-color: #e0e0e0;
+            --input-bg: #f9f9f9;
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+        }
+
+        /* --- Dark Mode Variables --- */
+        .dark-mode {
+            --bg-color: #121212;
+            --container-bg: #1f1f1f;
+            --text-color: #e0e0e0;
+            --header-bg: #64b5f6;
+            --header-text: #121212;
+            --border-color: #333333;
+            --input-bg: #2d2d2d;
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Base Body */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px;
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            transition: background-color 0.4s, color 0.4s;
+        }
+        
+        /* Container */
+        .container { 
+            max-width: 950px; 
+            margin: auto; 
+            background: var(--container-bg); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.8s; /* Container fade-in */
+        }
+        
+        /* Headings */
+        h1 { 
+            text-align: center; 
+            color: var(--header-bg); 
+            margin-bottom: 25px;
+        }
+        
+        /* --- 2. Login Page Styling --- */
+        #loginScreen {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            background-color: var(--container-bg);
+            text-align: center;
+        }
+
+        #loginScreen input {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+        #loginScreen input:focus {
+            border-color: var(--header-bg);
+            outline: none;
+        }
+        
+        /* --- 3. Profile Bar --- */
+        #profileBar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        /* --- 4. MODAL POP-UP STYLING (UPDATED ANIMATION) --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1001; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* Darker overlay */
+        }
+        .modal-content {
+            background-color: var(--container-bg);
+            margin: 5% auto; 
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            width: 90%;
+            max-width: 700px; 
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            animation-name: slideDownFade; /* Updated animation */
+            animation-duration: 0.5s;
+        }
+        /* New Modal Animation */
+        @keyframes slideDownFade {
+            from {top: -50px; opacity: 0} 
+            to {top: 5%; opacity: 1} /* Slides down to the 5% margin */
+        }
+        
+        .close-btn {
+            color: var(--text-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--header-bg);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .dark-mode .close-btn:hover { color: var(--header-bg); }
+
+        /* --- MULTI-IO STYLING --- */
+        .io-line {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        /* Inputs and Selects styling (better focus) */
+        .io-line select, .io-line input {
+            transition: border-color 0.2s;
+        }
+        .io-line select:focus, .io-line input:focus {
+            border-color: var(--header-bg);
+            outline: none;
+        }
+        
+        /* --- 5. Action Buttons in Main App --- */
+        #actionButtons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: space-between;
+        }
+        #actionButtons .btn-base {
+            flex-grow: 1;
+            padding: 15px 10px;
+            font-size: 1.1em;
+        }
+        
+        /* --- 6. General & Table Styling --- */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: left; transition: background-color 0.3s; }
+        th { background-color: var(--header-bg); color: var(--header-text); font-weight: 600; }
+        tr:hover { 
+            background-color: #e3f2fd55; 
+            transform: scale(1.005); /* Slight row effect */
+            transition: transform 0.2s;
+        }
+        .dark-mode tr:hover { background-color: #333333; }
+
+
+        /* --- 7. Button Styling (UPDATED HOVER) --- */
+        .btn-base {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+        
+        /* Universal Hover Effect */
+        .btn-base:hover:not(:disabled) { 
+            transform: translateY(-2px); /* Lift effect */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        }
+        .btn-base:active:not(:disabled) { 
+            transform: scale(0.98); 
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Color definitions */
+        .add-btn, .add-btn-main, .save-multi-in { background-color: #28a745; color: white; }
+        .in-btn-main { background-color: #007bff; color: white; }
+        .out-btn-main, .save-multi-out { background-color: #dc3545; color: white; }
+        .add-line-btn { background-color: #6c757d; color: white; margin-top: 10px; }
+        
+        /* ⭐️ NEW SPECIFIC HOVER COLORS ⭐️ */
+        .add-btn:hover, .add-btn-main:hover, .save-multi-in:hover { background-color: #1e7e34; } /* Darker Green */
+        .in-btn-main:hover, .save-btn:hover { background-color: #0056b3; } /* Darker Blue */
+        .out-btn-main:hover, .save-multi-out:hover, #logoutButton:hover, .out-btn:hover { background-color: #c82333; } /* Darker Red */
+        .add-line-btn:hover, .delete-btn:hover { background-color: #5a6268; } /* Darker Gray */
+        #lowStockFilterBtn:hover, .edit-btn:hover { background-color: #e0a800; color: #333;} /* Darker Yellow/Amber */
+        
+        /* Logout Button */
+        #logoutButton { background-color: #dc3545; color: white; padding: 8px 15px; font-size: 0.9em; }
+
+        /* Table Action Buttons */
+        .edit-btn { background-color: #ffc107; color: #333; }
+        .delete-btn { background-color: #6c757d; color: white; }
+        .save-btn { background-color: #007bff; color: white; }
+        .cancel-btn { background-color: #f8f9fa; color: #333; border: 1px solid #ccc; }
+        .cancel-btn:hover { background-color: #e2e6ea; } /* Light Gray Hover */
+        
+        /* --- 8. Dark Mode & Alerts --- */
+        #darkModeToggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        /* Dark Mode Toggle Hover */
+        #darkModeToggle:hover { 
+            background-color: var(--header-bg); 
+            filter: brightness(1.1); /* Slightly brighter header color on hover */
+        }
+        
+        .low-stock-alert {
+            height: 10px;
+            width: 10px;
+            background-color: #dc3545;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 8px;
+            animation: pulse-more 1.5s infinite alternate;
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        }
+        @keyframes pulse-more {
+            0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+            50% { transform: scale(1.15); opacity: 0.8; box-shadow: 0 0 0 8px rgba(220, 53, 69, 0); }
+            100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<button id="darkModeToggle" class="btn-base" onclick="toggleDarkMode()">🌙 Enable Dark Mode</button>
+
+<div id="loginScreen">
+    <h1>Inventory Login</h1>
+    <p>Use username: **admin** and password: **123**</p>
+    <input type="text" id="usernameInput" placeholder="Username" value="admin" onkeyup="handleEnterKey(event, 'login')">
+    <input type="password" id="passwordInput" placeholder="Password" value="123" onkeyup="handleEnterKey(event, 'login')">
+    <button id="loginButton" class="btn-base" onclick="login()">Login</button>
+    <p id="loginMessage" style="color: red; margin-top: 10px;"></p>
+</div>
+
+<div class="container" id="mainApp" style="display: none;">
+    
+    <div id="profileBar">
+        <span id="welcomeMessage">Welcome, User!</span>
+        <button id="logoutButton" class="btn-base" onclick="logout()">Logout</button>
+    </div>
+
+    <h1>Inventory Management System</h1>
+
+    <div id="actionButtons">
+        <button class="add-btn-main btn-base" onclick="openNewProductModal()">➕ Add New Product</button>
+        <button class="in-btn-main btn-base" onclick="openStockInModal()">⬆️ Stock In Multiple Quantities</button>
+        <button class="out-btn-main btn-base" onclick="openStockOutModal()">⬇️ Stock Out Multiple Quantities</button>
+    </div>
+    
+    <hr style="border-color: var(--border-color);">
+
+    
+    <button id="lowStockFilterBtn" class="btn-base" onclick="filterLowStock()">⚠️ Show Low Stock Only (0)</button>
+
+    <h2 id="tableHeader">Current Stock</h2>
+    <table id="inventoryTable">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+</div>
+
+<div id="newProductModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeNewProductModal()">&times;</span>
+        <h2>➕ Add New Product</h2>
+        <div class="modal-form-group">
+            <input type="text" id="newProductName" placeholder="Product Name" required onkeyup="handleEnterKey(event, 'addNewProduct')">
+            <input type="number" id="newProductQuantity" placeholder="Starting Quantity" min="0" required onkeyup="handleEnterKey(event, 'addNewProduct')">
+            <button class="add-btn btn-base" onclick="addNewProduct()">Create & Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="stockInModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeStockInModal()">&times;</span>
+        <h2>⬆️ Stock In Multiple Items</h2>
+        <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Select products and enter the quantity to add for each item.</p>
+
+        <div id="stockInItems" onkeyup="handleEnterKey(event, 'multiStockIn')"></div>
+
+        <button class="add-line-btn btn-base" onclick="addStockInLine()">+ Add Another Product</button>
+        <hr style="border-color: var(--border-color); margin: 15px 0;">
+        <button class="save-multi-in btn-base" onclick="multiStockIn()">✅ Save All Stock In Quantities</button>
+    </div>
+</div>
+
+<div id="stockOutModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeStockOutModal()">&times;</span>
+        <h2>⬇️ Stock Out Multiple Items</h2>
+        <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Select products and enter the quantity to subtract for each item.</p>
+
+        <div id="stockOutItems" onkeyup="handleEnterKey(event, 'multiStockOut')"></div>
+
+        <button class="add-line-btn btn-base" onclick="addStockOutLine()">+ Add Another Product</button>
+        <hr style="border-color: var(--border-color); margin: 15px 0;">
+        <button class="save-multi-out btn-base" onclick="multiStockOut()">❌ Save All Stock Out Quantities</button>
+    </div>
+</div>
+
+
+<script>
+    const STORAGE_KEY = 'fullInventoryData';
+    const MODE_KEY = 'darkModeEnabled';
+    const LOGGED_IN_KEY = 'loggedInUser';
+    const LOW_STOCK_THRESHOLD = 10;
+    
+    const USERS = {
+        'admin': { password: '123', name: 'Inventory Manager' },
+        'guest': { password: 'abc', name: 'Guest User' }
+    };
+    
+    let inventory = [];
+    let nextId = 1;
+    let isLowStockView = false;
+    let lineCounter = 0; 
+
+    // --- NEW: Enter Key Handler ---
+    function handleEnterKey(event, action) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Default form submit ko roko
+            switch (action) {
+                case 'login':
+                    login();
+                    break;
+                case 'addNewProduct':
+                    addNewProduct();
+                    break;
+                case 'multiStockIn':
+                    multiStockIn();
+                    break;
+                case 'multiStockOut':
+                    multiStockOut();
+                    break;
+            }
+        }
+    }
+    // --- End Enter Key Handler ---
+
+
+    // --- Modal Functions (Unchanged) ---
+
+    function openNewProductModal() {
+        document.getElementById('newProductModal').style.display = 'block';
+    }
+
+    function closeNewProductModal() {
+        document.getElementById('newProductModal').style.display = 'none';
+        document.getElementById('newProductName').value = '';
+        document.getElementById('newProductQuantity').value = '';
+    }
+
+    function openStockInModal() {
+        document.getElementById('stockInModal').style.display = 'block';
+        const stockInItemsDiv = document.getElementById('stockInItems');
+        stockInItemsDiv.innerHTML = '';
+        lineCounter = 0;
+        addStockInLine();
+    }
+
+    function closeStockInModal() {
+        document.getElementById('stockInModal').style.display = 'none';
+        document.getElementById('stockInItems').innerHTML = '';
+    }
+    
+    function openStockOutModal() {
+        document.getElementById('stockOutModal').style.display = 'block';
+        const stockOutItemsDiv = document.getElementById('stockOutItems');
+        stockOutItemsDiv.innerHTML = '';
+        lineCounter = 0; 
+        addStockOutLine();
+    }
+
+    function closeStockOutModal() {
+        document.getElementById('stockOutModal').style.display = 'none';
+        document.getElementById('stockOutItems').innerHTML = '';
+    }
+
+
+    function addStockInLine() {
+        const stockInItemsDiv = document.getElementById('stockInItems');
+        const newLine = document.createElement('div');
+        newLine.className = 'io-line';
+        newLine.id = `stock-in-line-${lineCounter}`;
+
+        const select = createProductSelect('selectProductIn', lineCounter);
+        const input = createQuantityInput('quantityInValue', lineCounter, 'Qty to Add');
+        const removeBtn = createRemoveButton(newLine);
+
+        newLine.appendChild(select);
+        newLine.appendChild(input);
+        
+        if (lineCounter > 0) {
+             newLine.appendChild(removeBtn);
+        }
+
+        stockInItemsDiv.appendChild(newLine);
+        lineCounter++;
+    }
+    
+    function addStockOutLine() {
+        const stockOutItemsDiv = document.getElementById('stockOutItems');
+        const newLine = document.createElement('div');
+        newLine.className = 'io-line';
+        newLine.id = `stock-out-line-${lineCounter}`;
+
+        const select = createProductSelect('selectProductOut', lineCounter);
+        const input = createQuantityInput('quantityOutValue', lineCounter, 'Qty to Subtract');
+        const removeBtn = createRemoveButton(newLine);
+
+        newLine.appendChild(select);
+        newLine.appendChild(input);
+        
+        if (lineCounter > 0) {
+             newLine.appendChild(removeBtn);
+        }
+
+        stockOutItemsDiv.appendChild(newLine);
+        lineCounter++;
+    }
+
+    function createProductSelect(idPrefix, lineId) {
+        const select = document.createElement('select');
+        select.className = 'product-io-select';
+        select.id = `${idPrefix}-${lineId}`;
+        select.setAttribute('data-line-id', lineId);
+        
+        let optionsHTML = '<option value="">-- Select Product --</option>';
+        inventory.forEach(item => {
+            optionsHTML += `<option value="${item.id}">${item.name}</option>`;
+        });
+        select.innerHTML = optionsHTML;
+        return select;
+    }
+
+    function createQuantityInput(idPrefix, lineId, placeholder) {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'quantity-io-input';
+        input.id = `${idPrefix}-${lineId}`;
+        input.placeholder = placeholder;
+        input.min = '1';
+        return input;
+    }
+
+    function createRemoveButton(lineElement) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-base out-btn action-btn';
+        removeBtn.textContent = 'X';
+        removeBtn.onclick = function() {
+            lineElement.remove();
+        };
+        return removeBtn;
+    }
+
+
+    window.onclick = function(event) {
+        const newProductModal = document.getElementById('newProductModal');
+        const stockInModal = document.getElementById('stockInModal');
+        const stockOutModal = document.getElementById('stockOutModal');
+
+        if (event.target == newProductModal) {
+            closeNewProductModal();
+        } else if (event.target == stockInModal) {
+            closeStockInModal();
+        } else if (event.target == stockOutModal) {
+            closeStockOutModal();
+        }
+    }
+
+
+    // --- Authentication, Persistence & Dark Mode (Unchanged) ---
+
+    function checkAuth() {
+        const user = localStorage.getItem(LOGGED_IN_KEY);
+        if (user) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${USERS[user].name}!`;
+            loadInventory();
+            renderInventory();
+        } else {
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+        }
+    }
+
+    function login() {
+        const username = document.getElementById('usernameInput').value;
+        const password = document.getElementById('passwordInput').value;
+        const message = document.getElementById('loginMessage');
+
+        if (USERS[username] && USERS[username].password === password) {
+            localStorage.setItem(LOGGED_IN_KEY, username);
+            message.textContent = '';
+            checkAuth();
+        } else {
+            message.textContent = 'Invalid username or password.';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem(LOGGED_IN_KEY);
+        document.getElementById('usernameInput').value = ''; 
+        document.getElementById('passwordInput').value = ''; 
+        alert('You have been logged out.');
+        checkAuth();
+    }
+    
+    function loadInventory() {
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+            inventory = JSON.parse(storedData);
+        } else {
+            inventory = [
+                { id: 1, name: 'Warehouse Widget', quantity: 15 },
+                { id: 2, name: 'Bulk Fastener (M8)', quantity: 4 },
+                { id: 3, name: 'Assembly Tool Kit', quantity: 50 }
+            ];
+        }
+        nextId = inventory.length > 0 ? Math.max(...inventory.map(item => item.id)) + 1 : 1;
+    }
+
+    function saveInventory() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
+    }
+    
+    function toggleDarkMode() {
+        const body = document.body;
+        const button = document.getElementById('darkModeToggle');
+        
+        body.classList.toggle('dark-mode');
+        
+        const isDarkMode = body.classList.contains('dark-mode');
+        localStorage.setItem(MODE_KEY, isDarkMode ? 'enabled' : 'disabled');
+        
+        button.textContent = document.body.classList.contains('dark-mode') ? '💡 Disable Dark Mode' : '🌙 Enable Dark Mode';
+    }
+
+    function applyInitialMode() {
+        const savedMode = localStorage.getItem(MODE_KEY);
+        if (savedMode === 'enabled') {
+            document.body.classList.add('dark-mode');
+        }
+        const button = document.getElementById('darkModeToggle');
+        if (button) {
+            button.textContent = document.body.classList.contains('dark-mode') ? '💡 Disable Dark Mode' : '🌙 Enable Dark Mode';
+        }
+    }
+
+    function filterLowStock() {
+        isLowStockView = !isLowStockView;
+        renderInventory();
+    }
+
+    // --- Core Inventory Functions (Unchanged) ---
+
+    function addNewProduct() {
+        const nameInput = document.getElementById('newProductName');
+        const quantityInput = document.getElementById('newProductQuantity');
+
+        const name = nameInput.value.trim();
+        const quantity = parseInt(quantityInput.value);
+
+        if (name && !isNaN(quantity) && quantity >= 0) {
+            inventory.push({
+                id: nextId++,
+                name: name,
+                quantity: quantity
+            });
+            closeNewProductModal();
+            renderInventory();
+        } else {
+            alert('Please enter a valid product name and non-negative quantity.');
+        }
+    }
+
+    function multiStockIn() {
+        const selectElements = document.querySelectorAll('#stockInItems .product-io-select');
+        const quantityElements = document.querySelectorAll('#stockInItems .quantity-io-input');
+        let transactions = 0;
+
+        for (let i = 0; i < selectElements.length; i++) {
+            const selectedProductId = parseInt(selectElements[i].value);
+            const quantityToAdd = parseInt(quantityElements[i].value);
+
+            if (selectedProductId && !isNaN(quantityToAdd) && quantityToAdd > 0) {
+                const item = inventory.find(invItem => invItem.id === selectedProductId);
+                if (item) {
+                    item.quantity += quantityToAdd;
+                    transactions++;
+                }
+            }
+        }
+
+        if (transactions > 0) {
+            alert(`Stock In successful! ${transactions} product(s) updated.`);
+            closeStockInModal();
+            renderInventory();
+        } else {
+            alert('Please select at least one product with a valid quantity (greater than 0).');
+        }
+    }
+    
+    function multiStockOut() {
+        const selectElements = document.querySelectorAll('#stockOutItems .product-io-select');
+        const quantityElements = document.querySelectorAll('#stockOutItems .quantity-io-input');
+        let transactions = 0;
+        let errors = [];
+
+        for (let i = 0; i < selectElements.length; i++) {
+            const selectedProductId = parseInt(selectElements[i].value);
+            const quantityToSubtract = parseInt(quantityElements[i].value);
+
+            if (selectedProductId && !isNaN(quantityToSubtract) && quantityToSubtract > 0) {
+                const item = inventory.find(invItem => invItem.id === selectedProductId);
+                
+                if (item) {
+                    if (item.quantity >= quantityToSubtract) {
+                        item.quantity -= quantityToSubtract;
+                        transactions++;
+                    } else {
+                        errors.push(`Not enough stock for ${item.name}. Available: ${item.quantity}`);
+                    }
+                }
+            }
+        }
+
+        if (transactions > 0) {
+            let message = `Stock Out successful! ${transactions} product(s) updated.`;
+            if (errors.length > 0) {
+                message += "\n\n⚠️ Warnings:\n" + errors.join('\n');
+            }
+            alert(message);
+            closeStockOutModal();
+            renderInventory();
+        } else if (errors.length > 0) {
+             alert("Stock Out Failed:\n" + errors.join('\n'));
+        } else {
+            alert('Please select at least one product with a valid quantity (greater than 0).');
+        }
+    }
+
+
+    function renderInventory() {
+        const tableBody = document.getElementById('inventoryTable').getElementsByTagName('tbody')[0];
+        const lowStockBtn = document.getElementById('lowStockFilterBtn');
+        const tableHeader = document.getElementById('tableHeader');
+        
+        tableBody.innerHTML = ''; 
+
+        const itemsToDisplay = isLowStockView
+            ? inventory.filter(item => item.quantity <= LOW_STOCK_THRESHOLD)
+            : inventory;
+
+        const lowStockCount = inventory.filter(item => item.quantity <= LOW_STOCK_THRESHOLD).length;
+
+        if (isLowStockView) {
+            lowStockBtn.textContent = `✅ Showing Low Stock (${lowStockCount}). Click to Show All.`;
+            tableHeader.textContent = `Low Stock Items (${itemsToDisplay.length})`;
+        } else {
+            lowStockBtn.textContent = `⚠️ Show Low Stock Only (${lowStockCount})`;
+            tableHeader.textContent = 'Current Stock';
+        }
+
+        itemsToDisplay.forEach(item => {
+            const row = tableBody.insertRow();
+            row.id = `row-${item.id}`;
+            row.insertCell(0).innerHTML = item.name;
+            
+            let quantityCell = row.insertCell(1);
+            let quantityHTML = item.quantity;
+
+            if (item.quantity <= LOW_STOCK_THRESHOLD) {
+                const alertTitle = item.quantity === 0 ? 'Out of Stock!' : 'Low Stock!';
+                const bgColor = item.quantity === 0 ? 'orange' : '#dc3545';
+                quantityHTML += ` <span class="low-stock-alert" style="background-color: ${bgColor};" title="${alertTitle}"></span>`;
+            }
+            quantityCell.innerHTML = quantityHTML;
+
+
+            let actionCell = row.insertCell(2);
+            actionCell.innerHTML = `
+                <button class="edit-btn action-btn btn-base" onclick="startEdit(${item.id})">Edit</button>
+                <button class="delete-btn action-btn btn-base" onclick="deleteProduct(${item.id})">Remove</button>
+            `;
+        });
+        
+        saveInventory();
+    }
+
+
+    function deleteProduct(id) {
+        if (confirm('Are you sure you want to remove this product?')) {
+            inventory = inventory.filter(item => item.id !== id);
+            renderInventory();
+        }
+    }
+    
+    function startEdit(id) {
+        const item = inventory.find(i => i.id === id);
+        if (!item) return;
+
+        const row = document.getElementById(`row-${id}`);
+        const nameCell = row.cells[0];
+        const quantityCell = row.cells[1];
+        const actionCell = row.cells[2];
+
+        nameCell.innerHTML = `<input type="text" id="editName-${id}" value="${item.name}">`;
+        quantityCell.innerHTML = `<input type="number" id="editQuantity-${id}" value="${item.quantity}" min="0">`;
+
+        actionCell.innerHTML = `
+            <button class="save-btn action-btn btn-base" onclick="saveEdit(${id})">Save</button>
+            <button class="cancel-btn action-btn btn-base" onclick="cancelEdit(${id}, '${item.name}', ${item.quantity})">Cancel</button>
+        `;
+    }
+
+    function saveEdit(id) {
+        const nameInput = document.getElementById(`editName-${id}`);
+        const quantityInput = document.getElementById(`editQuantity-${id}`);
+
+        const newName = nameInput.value.trim();
+        const newQuantity = parseInt(quantityInput.value);
+
+        if (newName && !isNaN(newQuantity) && newQuantity >= 0) {
+            const item = inventory.find(i => i.id === id);
+            item.name = newName;
+            item.quantity = newQuantity;
+            renderInventory();
+        } else {
+            alert('Invalid input. Name cannot be empty and Quantity must be non-negative.');
+        }
+    }
+
+    function cancelEdit(id, originalName, originalQuantity) {
+        const row = document.getElementById(`row-${id}`);
+        row.cells[0].innerHTML = originalName;
+        row.cells[1].innerHTML = originalQuantity;
+
+        row.cells[2].innerHTML = `
+            <button class="edit-btn action-btn btn-base" onclick="startEdit(${id})">Edit</button>
+            <button class="delete-btn action-btn btn-base" onclick="deleteProduct(${id})">Remove</button>
+        `;
+    }
+
+
+    // Initialize the app
+    window.onload = function() {
+        applyInitialMode();
+        checkAuth();
+    }
+</script>
+<script src="script.js"></script>
+
+</body>
+</html>

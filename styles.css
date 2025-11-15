@@ -1,0 +1,319 @@
+/*
+ * Professional CSS Styles for Inventory Management System
+ * Aesthetics: Modern, Flat Design with Subtle Shadows and Clear Typography
+ * Theme: Primary Blue for Corporate Look
+ */
+
+/* --- 1. Global Variables & Base Styling --- */
+:root {
+    /* Main Palette (Corporate Blue) */
+    --primary-color: #1a73e8; /* Google Blue equivalent */
+    --primary-hover: #155bb9;
+    
+    /* Utility Colors */
+    --success-color: #00a082; /* Teal Green */
+    --danger-color: #d93025; /* Red */
+    --warning-color: #ff9800; /* Amber */
+    --neutral-color: #70757a; /* Gray */
+    --light-bg: #f5f7fa; /* Very light gray/blue background */
+    
+    /* Layout Colors */
+    --bg-color: var(--light-bg);
+    --container-bg: #ffffff;
+    --text-color: #3c4043; /* Darker text for readability */
+    --border-color: #dadce0; /* Subtle border */
+    --shadow: 0 1px 3px rgba(60, 64, 67, 0.1), 0 1px 2px rgba(60, 64, 67, 0.15); /* Modern, soft shadow */
+}
+
+/* --- Dark Mode Variables (Modern Dark) --- */
+.dark-mode {
+    --primary-color: #8ab4f8; 
+    --primary-hover: #669df6;
+    --success-color: #85d8bc;
+    --danger-color: #f28b82;
+    --warning-color: #fdd663;
+    --neutral-color: #9aa0a6;
+    --bg-color: #202124;
+    --container-bg: #292a2d;
+    --text-color: #e8eaed;
+    --border-color: #5f6368;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Base Body (FONT SIZE REDUCED TO 14PX) */
+body { 
+    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 0; 
+    padding: 20px;
+    background-color: var(--bg-color); 
+    color: var(--text-color);
+    transition: background-color 0.4s, color 0.4s;
+    line-height: 1.6;
+    font-size: 14px; /* Default size for readability */
+}
+
+/* Container */
+.container { 
+    max-width: 1000px;
+    margin: auto; 
+    background: var(--container-bg); 
+    padding: 30px; 
+    border-radius: 8px; 
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.8s;
+}
+
+/* Headings (ADJUSTED FONT SIZE) */
+h1 { 
+    text-align: center; 
+    color: var(--primary-color); 
+    margin-bottom: 30px;
+    font-size: 1.8em; /* Reduced from 2em */
+    font-weight: 500;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+}
+h2 {
+    font-size: 1.3em; /* Reduced from 1.5em */
+    font-weight: 400;
+    margin-top: 25px;
+    color: var(--text-color);
+}
+
+/* --- 2. Input Fields & Forms --- */
+#loginScreen input,
+.modal input[type="text"],
+.modal input[type="number"],
+.product-io-select {
+    width: 100%;
+    padding: 10px; /* Reduced padding */
+    margin: 8px 0;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--container-bg);
+    color: var(--text-color);
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-size: 14px; /* Consistent input font size */
+}
+
+#loginScreen input:focus,
+.modal input:focus,
+.product-io-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+    outline: none;
+}
+
+/* Multi IO Line adjustments */
+.io-line {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px; /* Reduced margin */
+}
+.io-line select, .io-line input {
+    flex-grow: 1;
+    margin: 0;
+}
+.modal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Reduced gap */
+    margin-bottom: 15px;
+}
+.modal-form-group input {
+    margin: 0;
+}
+
+/* --- 3. Button Styling & Animations (ADJUSTED PADDING/FONT) --- */
+.btn-base {
+    padding: 8px 16px; /* Reduced padding */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    font-size: 13px; /* Slightly smaller button text */
+}
+
+/* Global Hover/Active Effect */
+.btn-base:hover:not(:disabled) { 
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); 
+}
+.btn-base:active:not(:disabled) { 
+    transform: scale(0.98); 
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Color definitions */
+.add-btn, .add-btn-main, .save-multi-in { background-color: var(--success-color); color: white; }
+.in-btn-main, .save-btn, #loginButton { background-color: var(--primary-color); color: white; }
+.out-btn-main, .save-multi-out, #logoutButton, .delete-btn { background-color: var(--danger-color); color: white; }
+.add-line-btn { background-color: var(--neutral-color); color: white; margin-top: 8px; }
+.edit-btn, #lowStockFilterBtn { background-color: var(--warning-color); color: var(--text-color); }
+
+/* Specific Hover Colors (Unchanged) */
+.add-btn:hover, .add-btn-main:hover, .save-multi-in:hover { background-color: #007d66; }
+.in-btn-main:hover, .save-btn:hover, #loginButton:hover { background-color: var(--primary-hover); }
+.out-btn-main:hover, .save-multi-out:hover, #logoutButton:hover, .delete-btn:hover, .out-btn:hover { background-color: #b72b22; }
+.add-line-btn:hover { background-color: #5c6267; }
+.edit-btn:hover, #lowStockFilterBtn:hover { background-color: #e68900; }
+.cancel-btn { background-color: var(--light-bg); color: var(--text-color); border: 1px solid var(--border-color); }
+.cancel-btn:hover { background-color: #e5e9ec; }
+
+
+/* --- 4. Layout Elements --- */
+#profileBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0; /* Reduced padding */
+    margin-bottom: 15px; /* Reduced margin */
+    border-bottom: 1px solid var(--border-color);
+}
+#actionButtons {
+    display: flex;
+    gap: 10px; /* Reduced gap */
+    margin-bottom: 20px; /* Reduced margin */
+    justify-content: space-between;
+}
+#actionButtons .btn-base {
+    flex-grow: 1;
+    padding: 12px 10px; /* Reduced height */
+    font-size: 0.9em; /* Adjusted size */
+}
+
+/* --- 5. Table Styling (ADJUSTED PADDING/FONT) --- */
+table { 
+    width: 100%; 
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 15px; 
+}
+th, td { 
+    padding: 12px; /* Reduced padding */
+    text-align: left; 
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px; /* Consistent table text size */
+}
+th { 
+    background-color: var(--primary-color); 
+    color: white; 
+    font-weight: 500; 
+    position: sticky;
+    top: 0;
+}
+/* Table Header Rounded Corners */
+#inventoryTable thead tr:first-child th:first-child { border-top-left-radius: 8px; }
+#inventoryTable thead tr:first-child th:last-child { border-top-right-radius: 8px; }
+
+/* Table Row Hover */
+#inventoryTable tbody tr:hover { 
+    background-color: var(--light-bg); 
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+.dark-mode #inventoryTable tbody tr:hover { background-color: #333333; }
+
+/* Table Edit Inputs */
+#inventoryTable input[type="text"], 
+#inventoryTable input[type="number"] {
+    padding: 6px; /* Reduced padding */
+    width: 90%;
+    margin: 0;
+    font-size: 13px; /* Slightly smaller input font */
+}
+.action-btn {
+    margin: 3px;
+    padding: 6px 10px; /* Reduced padding */
+    font-size: 12px;
+}
+
+/* --- 6. Modal Styling --- */
+.modal-content {
+    margin: 7% auto;
+    padding: 30px; /* Reduced padding */
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* --- 7. Alerts and Pulse Animation --- */
+.low-stock-alert {
+    height: 9px; /* Slightly smaller */
+    width: 9px;
+    background-color: var(--danger-color);
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 6px;
+    animation: pulse-more 1.5s infinite alternate;
+    box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.7);
+}
+
+/* Pulse Animation (Unchanged) */
+@keyframes pulse-more {
+    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.7); }
+    50% { transform: scale(1.15); opacity: 0.8; box-shadow: 0 0 0 8px rgba(217, 48, 37, 0); }
+    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.7); }
+}
+
+/* General Fade In (Unchanged) */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+/* Modal Slide Down Fade (Unchanged) */
+@keyframes slideDownFade {
+    from {top: -50px; opacity: 0} 
+    to {top: 7%; opacity: 1}
+}
+
+/* --- 8. Dark Mode Toggle --- */
+#darkModeToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--neutral-color);
+    color: white;
+    padding: 8px 16px; /* Reduced padding */
+    border-radius: 50px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    font-size: 13px;
+}
+#darkModeToggle:hover { 
+    background-color: #5c6267;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    body {
+        font-size: 13px; /* Further reduction on small screens */
+    }
+    .container {
+        padding: 15px;
+    }
+    #actionButtons {
+        flex-direction: column;
+        gap: 8px;
+    }
+    #actionButtons .btn-base {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+    th, td {
+        padding: 8px;
+        font-size: 13px;
+    }
+    .io-line {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .io-line select, .io-line input {
+        width: 100%;
+        font-size: 13px;
+    }
+}
